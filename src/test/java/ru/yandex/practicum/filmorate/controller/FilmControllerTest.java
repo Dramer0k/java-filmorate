@@ -17,8 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class FilmControllerTest {
     private static final String BASE_PATH = "/films";
-    private static final String JSON_POST_PATH = "src\\test\\resources\\request\\filmRequests\\post\\";
-    private static final String JSON_PUT_PATH = "src\\test\\resources\\request\\filmRequests\\put\\";
+    private static final String JSON_POST_PATH = "src/test/resources/request/filmRequests/post/";
+    private static final String JSON_PUT_PATH = "src/test/resources/request/filmRequests/put/";
 
     @Autowired
     private MockMvc mockMvc;

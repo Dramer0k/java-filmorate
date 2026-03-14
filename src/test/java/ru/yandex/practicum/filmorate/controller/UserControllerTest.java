@@ -17,8 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class UserControllerTest {
     private static final String BASE_PATH = "/users";
-    private static final String JSON_POST_PATH = "src\\test\\resources\\request\\userRequests\\";
-    private static final String JSON_PUT_PATH = "src\\test\\resources\\request\\userRequests\\";
+    private static final String JSON_PATH = "src/test/resources/request/userRequests/";
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,7 +31,7 @@ class UserControllerTest {
     @Test
     void testCorrectPost() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "correct.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "correct.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -40,7 +39,7 @@ class UserControllerTest {
     @Test
     void testNullLogin() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "nullLogin.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "nullLogin.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Неверный формат логина"));
     }
@@ -48,7 +47,7 @@ class UserControllerTest {
     @Test
     void testBlankLogin() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "blankLogin.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "blankLogin.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Неверный формат логина"));
     }
@@ -56,7 +55,7 @@ class UserControllerTest {
     @Test
     void testLoginWishSpace() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "wishSpaceLogin.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "wishSpaceLogin.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Неверный формат логина"));
     }
@@ -64,7 +63,7 @@ class UserControllerTest {
     @Test
     void testNullName() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "nullName.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "nullName.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("Sasha"));
     }
@@ -72,7 +71,7 @@ class UserControllerTest {
     @Test
     void testBlankName() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                        .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "blankName.json"))))
+                        .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "blankName.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("Sasha"));
     }
@@ -80,7 +79,7 @@ class UserControllerTest {
     @Test
     void testNullEmail() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "nullEmail.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "nullEmail.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Неверный формат почты"));
     }
@@ -88,7 +87,7 @@ class UserControllerTest {
     @Test
     void testMissingAmpersandInEmail() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                        .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "missingAmpersandEmail.json"))))
+                        .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "missingAmpersandEmail.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Неверный формат почты"));
     }
@@ -96,7 +95,7 @@ class UserControllerTest {
     @Test
     void testNullBirthday() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "nullBirthday.json"))))
+                .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "nullBirthday.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Дата рождения не может быть пустой"));
     }
@@ -104,7 +103,7 @@ class UserControllerTest {
     @Test
     void testBirthdayAfterNow() throws Exception {
         mockMvc.perform(post(BASE_PATH)
-                        .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "birthdayAfterNow.json"))))
+                        .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "birthdayAfterNow.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Неверно указана дата рождения"));
     }
@@ -112,7 +111,7 @@ class UserControllerTest {
     @Test
     void testBlankId() throws Exception {
         mockMvc.perform(put(BASE_PATH)
-                        .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "blankId.json"))))
+                        .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "blankId.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Id должен быть указан"));
     }
@@ -120,7 +119,7 @@ class UserControllerTest {
     @Test
     void testNullId() throws Exception {
         mockMvc.perform(put(BASE_PATH)
-                        .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "nullId.json"))))
+                        .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "nullId.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(forwardedUrl("Id должен быть указан"));
     }
@@ -128,7 +127,7 @@ class UserControllerTest {
     @Test
     void testCorrectUpdate() throws Exception {
         mockMvc.perform(put(BASE_PATH)
-                        .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "update.json"))))
+                        .content(new String(Files.readAllBytes(Paths.get(JSON_PATH + "update.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("Masha"))
                 .andExpect(jsonPath("$.id").value("1"))
