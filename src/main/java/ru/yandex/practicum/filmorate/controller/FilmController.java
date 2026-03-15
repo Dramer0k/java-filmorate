@@ -18,7 +18,7 @@ public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
     public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    public final int MAX_DESCRIPTION_LENGTH = 200;
+    public static final int MAX_DESCRIPTION_LENGTH = 200;
     private long id = 1;
 
     @GetMapping
