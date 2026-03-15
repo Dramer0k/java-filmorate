@@ -18,6 +18,8 @@ public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
     public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    public final int MAX_DESCRIPTION_LENGTH = 200;
+    private long id = 1;
 
     @GetMapping
     public Collection<Film> getFilms() {
@@ -34,7 +36,8 @@ public class FilmController {
         checkValidateDuration(film);
         checkValidateName(film);
 
-        film.setId(getNextId());
+        film.setId(id);
+        id++;
         films.put(film.getId(), film);
 
         log.info("Новый фильм добавлен {}", film);
@@ -80,15 +83,6 @@ public class FilmController {
         return oldFilm;
     }
 
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
-    }
-
     public void checkValidateName(Film film) throws ValidationException {
         if (film.getName() == null || film.getName().isBlank()) {
             log.debug("Название фильма пустое {}", film.getName());
@@ -97,7 +91,7 @@ public class FilmController {
     }
 
     public void checkValidateDescription(Film film) throws ValidationException {
-        if (film.getDescription().length() > 200) {
+        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.debug("Описание фильма более 200 символов: {}", film.getDescription().length());
             throw new ValidationException("Описание должно быть менее 200 символов");
         }

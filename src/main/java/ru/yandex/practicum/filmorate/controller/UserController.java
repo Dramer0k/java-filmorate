@@ -17,6 +17,7 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Long, User> users = new HashMap<>();
+    private long id = 1;
 
     @GetMapping
     public Collection<User> getFilm() {
@@ -33,7 +34,8 @@ public class UserController {
         checkValidateEmail(user);
         checkValidateBirthday(user);
 
-        user.setId(getNextId());
+        user.setId(id);
+        id++;
 
         users.put(user.getId(), user);
         log.info("Новый пользователь {} добавлен", user);
@@ -74,15 +76,6 @@ public class UserController {
         log.info("Данные пользователя изменены!");
 
         return oldUser;
-    }
-
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
     }
 
     public void checkValidateEmail(User user) throws ValidationException {

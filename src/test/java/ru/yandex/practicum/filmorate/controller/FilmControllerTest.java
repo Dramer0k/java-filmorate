@@ -105,7 +105,7 @@ class FilmControllerTest {
         mockMvc.perform(put(BASE_PATH)
                         .content(new String(Files.readAllBytes(Paths.get(JSON_PUT_PATH + "incorrectDuration.json"))))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(forwardedUrl("Продолжительность фильма не может быть отрицательной"));
+                 .andExpect(forwardedUrl("Продолжительность фильма не может быть отрицательной"));
     }
 
     @Test
