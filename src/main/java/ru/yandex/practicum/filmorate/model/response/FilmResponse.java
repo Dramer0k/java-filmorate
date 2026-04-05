@@ -1,19 +1,16 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.response;
 
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Data
-public class Film {
+@AllArgsConstructor
+public class FilmResponse {
     private Long id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private Integer duration;
-    private int likeCount = 0;
 }
