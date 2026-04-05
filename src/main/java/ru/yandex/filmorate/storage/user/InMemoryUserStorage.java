@@ -90,12 +90,12 @@ public class InMemoryUserStorage implements UserStorage {
     public void removeFriend(String id, String friendId) {
         User user = users.get(Long.valueOf(id));
         User friend = users.get(Long.valueOf(friendId));
-        /*if  (user == null || friend == null) {
+        if  (user == null || friend == null) {
             throw new NotFoundException("Пользователь не найден!");
-        }
+        } /*
         if (!user.getFriends().contains(friend.getId())) {
-            throw new ConditionsNotMetException("Такого друга нет в вашем списке!");
-        }*/
+            throw new NotFoundException("Такого друга нет в вашем списке!");
+        } */
         user.getFriends().remove(friend.getId());
         friend.getFriends().remove(user.getId());
 
