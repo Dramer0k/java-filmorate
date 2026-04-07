@@ -18,7 +18,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
-    @Autowired
     InMemoryUserStorage inMemoryUserStorage;
     private long id = 1;
 
@@ -51,62 +50,21 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) throws ValidationException {
-        Film oldFilm = films.get(film.getId());
-        if (oldFilm == null) {
-            throw new NotFoundException("Фильма с id " + film.getId() + " не существует!");
-        }
-
-        if (film.getName() != null && !film.getName().isBlank()) {
-            log.debug("Меняем название фильма {} с {} на {}", film.getId(), oldFilm.getName(), film.getName());
-            oldFilm.setName(film.getName());
-            log.info("Название фильма {} изменено на {}!", oldFilm.getId(), oldFilm.getName());
-        }
-        if (film.getDescription() != null && !film.getDescription().isBlank()) {
-            log.debug("Меняем описание фильма {} с {} на {}", film.getId(), oldFilm.getDescription(), film.getDescription());
-            oldFilm.setDescription(film.getDescription());
-            log.info("Описание фильма {} изменено на {}!", oldFilm.getId(), oldFilm.getDescription());
-        }
-        if (film.getReleaseDate() != null) {
-            log.debug("Меняем дату релиза фильма {} с {} на {}", film.getId(), oldFilm.getReleaseDate(), film.getReleaseDate());
-            oldFilm.setReleaseDate(film.getReleaseDate());
-            log.info("Дата релиза фильма {} изменена на {}!", oldFilm.getId(), oldFilm.getReleaseDate());
-        }
-        if (film.getDuration() != null) {
-            log.debug("Меняем длительность фильма {} с {} на {}", film.getId(), oldFilm.getDuration(), film.getDuration());
-            oldFilm.setDuration(film.getDuration());
-            log.info("Длительность фильма {} изменена на {}!", oldFilm.getId(), oldFilm.getDuration());
-        }
-
-        log.info("В информацию о фильме {} внесены изменения!", oldFilm.getId());
-        return oldFilm;
+        films.put(film.getId(), film);
+        log.info("В информацию о фильме {} внесены изменения!", film.getId());
+        return film;
     }
 
     @Override
     public void setLike(String id, String userId) {
-        User user = inMemoryUserStorage.getById(Long.valueOf(userId));
         Film film = films.get(Long.valueOf(id));
-        if (film == null) {
-            throw new NotFoundException("Фильм с id " + id + " не найден!");
-        }
-        if (user.getFavoriteFilms().contains(film.getId())) {
-            throw new ConditionsNotMetException("Лайк на этот фильм уже поставлен!");
-        }
-        user.getFavoriteFilms().add(film.getId());
         film.setLikeCount(film.getLikeCount() + 1);
         log.info("Лайк поставлен!");
     }
 
     @Override
     public void removeLike(String id, String userId) {
-        User user = inMemoryUserStorage.getById(Long.valueOf(userId));
         Film film = films.get(Long.valueOf(id));
-        if (film == null) {
-            throw new NotFoundException("Фильм с id " + id + " не найден!");
-        }
-        if (!user.getFavoriteFilms().contains(film.getId())) {
-            throw new ConditionsNotMetException("Лайка на этом фильме нет!");
-        }
-        user.getFavoriteFilms().remove(film.getId());
         film.setLikeCount(film.getLikeCount() - 1);
         log.info("Лайк удален!");
     }

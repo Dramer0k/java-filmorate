@@ -34,29 +34,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUserInfo(User user) {
-        User oldUser = users.get(user.getId());
-        if (oldUser == null) {
-            throw new NotFoundException("Пользователь с id " + user.getId() + " не найден!");
-        }
-
-        if (user.getName() != null && !user.getName().isBlank()) {
-            log.debug("Пользователь с id: {}. Меняем имя {} на {}", user.getId(), oldUser.getName(), user.getName());
-            oldUser.setName(user.getName());
-            log.info("У пользователя с id {} изменено имя на {}", user.getId(), user.getName());
-        }
-        if (user.getLogin() != null) {
-            oldUser.setLogin(user.getLogin());
-        }
-        if (user.getEmail() != null) {
-            log.debug("Пользователь с id: {}. Меняем почту {} на {}", user.getId(), oldUser.getEmail(), user.getEmail());
-            oldUser.setEmail(user.getEmail());
-            log.info("У пользователя с id {} изменена почта на {}", user.getId(), user.getEmail());
-        }
-        if (oldUser.getBirthday() != null) {
-            log.debug("Пользователь с id: {}. Меняем дату рождения {} на {}", user.getId(), oldUser.getBirthday(), user.getBirthday());
-            oldUser.setBirthday(user.getBirthday());
-            log.info("У пользователя с id {} изменена дата рождения на {}", user.getId(), user.getBirthday());
-        }
+        users.put(user.getId(), user);
         log.info("Данные пользователя изменены!");
         return user;
     }
@@ -92,14 +70,35 @@ public class InMemoryUserStorage implements UserStorage {
         User friend = users.get(Long.valueOf(friendId));
         if  (user == null || friend == null) {
             throw new NotFoundException("Пользователь не найден!");
-        } /*
-        if (!user.getFriends().contains(friend.getId())) {
-            throw new NotFoundException("Такого друга нет в вашем списке!");
-        } */
+        }
         user.getFriends().remove(friend.getId());
         friend.getFriends().remove(user.getId());
 
         log.info("Друг с id {} удален", friend.getId());
+    }
+
+    @Override
+    public void setLike(String id, String userId) {
+        User user = users.get(Long.valueOf(userId));
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден!");
+        }
+        if (user.getFavoriteFilms().contains(Long.valueOf(id))) {
+            throw new ConditionsNotMetException("Лайк на этот фильм уже поставлен!");
+        }
+        user.getFavoriteFilms().add(Long.valueOf(id));
+    }
+
+    @Override
+    public void removeLike(String id, String userId) {
+        User user = users.get(Long.valueOf(userId));
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден!");
+        }
+        if (!user.getFavoriteFilms().contains(Long.valueOf(id))) {
+            throw new ConditionsNotMetException("Лайка на этом фильме нет!");
+        }
+        user.getFavoriteFilms().remove(Long.valueOf(id));
     }
 
     @Override

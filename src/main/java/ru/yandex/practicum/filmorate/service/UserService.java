@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -36,14 +37,38 @@ public class UserService {
 
     public User updateUserInfo(User user) throws ValidationException {
         log.info("PUT /users {}", user);
+        if (user.getId() == null || user.getId().toString().isBlank()) {
+            log.debug("не указан id {}", user.getId());
+            throw new ConditionsNotMetException("Id должен быть указан");
+        }
+        User oldUser = userStorage.getById(user.getId());
+        if (oldUser == null) {
+            throw new NotFoundException("Пользователь с id " + user.getId() + " не найден!");
+        }
 
         checkValidateLogin(user);
         checkValidateBirthday(user);
         checkValidateEmail(user);
 
-        if (user.getId() == null || user.getId().toString().isBlank()) {
-            log.debug("не указан id {}", user.getId());
-            throw new ConditionsNotMetException("Id должен быть указан");
+        log.info(String.valueOf(user.getId()));
+
+        if (user.getName() == null && !user.getName().isBlank()) {
+            log.debug("Пользователь с id: {}. Меняем имя {} на {}", user.getId(), oldUser.getName(), user.getName());
+            user.setName(oldUser.getName());
+            log.info("У пользователя с id {} изменено имя на {}", user.getId(), user.getName());
+        }
+        if (user.getLogin() == null) {
+            user.setLogin(oldUser.getLogin());
+        }
+        if (user.getEmail() == null) {
+            log.debug("Пользователь с id: {}. Меняем почту {} на {}", user.getId(), oldUser.getEmail(), user.getEmail());
+            user.setEmail(oldUser.getEmail());
+            log.info("У пользователя с id {} изменена почта на {}", user.getId(), user.getEmail());
+        }
+        if (user.getBirthday() == null) {
+            log.debug("Пользователь с id: {}. Меняем дату рождения {} на {}", user.getId(), oldUser.getBirthday(), user.getBirthday());
+            user.setBirthday(oldUser.getBirthday());
+            log.info("У пользователя с id {} изменена дата рождения на {}", user.getId(), user.getBirthday());
         }
 
         return userStorage.updateUserInfo(user);
@@ -81,21 +106,21 @@ public class UserService {
         return userStorage.getMutualFriends(id, friendId);
     }
 
-    public void checkValidateEmail(User user) throws ValidationException {
+    private void checkValidateEmail(User user) throws ValidationException {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.debug("Неверный формат почты {}", user.getEmail());
             throw new ValidationException("Неверный формат почты");
         }
     }
 
-    public void checkValidateLogin(User user) throws ValidationException {
+    private void checkValidateLogin(User user) throws ValidationException {
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().trim().contains(" ")) {
             log.debug("Неверный формат логина {}", user.getLogin());
             throw new ValidationException("Неверный формат логина");
         }
     }
 
-    public void checkValidateName(User user) {
+    private void checkValidateName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             log.debug("Имя пользователя не было введено, указываем логин {}", user.getLogin());
             user.setName(user.getLogin());
@@ -103,7 +128,7 @@ public class UserService {
         }
     }
 
-    public void checkValidateBirthday(User user) throws ValidationException {
+    private void checkValidateBirthday(User user) throws ValidationException {
         if (user.getBirthday() == null) {
             log.debug("Дата рождения не указана");
             throw new ValidationException("Дата рождения не может быть пустой");

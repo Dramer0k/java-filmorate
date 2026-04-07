@@ -21,4 +21,7 @@ public interface FilmStorage {
     void removeLike(String id, String userId);
 
     List<Film> getFavoritesFilms(String count);
+
+    Film getFilm(Long filmId);
+
 }
