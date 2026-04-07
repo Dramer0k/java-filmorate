@@ -58,7 +58,6 @@ import java.util.List;
         checkValidateDate(film);
         checkValidateDuration(film);
 
-
         if (film.getId() == null || film.getId().toString().isBlank()) {
             log.debug("Не указан id {}", film.getId());
             throw new ConditionsNotMetException("Id должен быть указан");
@@ -66,29 +65,26 @@ import java.util.List;
         if (oldFilm == null) {
             throw new NotFoundException("Фильма с id " + film.getId() + " не существует!");
         }
-        if (film.getName() != null || !film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isBlank()) {
             log.debug("Меняем название фильма {} с {} на {}", film.getId(), oldFilm.getName(), film.getName());
             film.setName(oldFilm.getName());
             log.info("Название фильма {} изменено на {}!", oldFilm.getId(), oldFilm.getName());
         }
-        if (film.getDescription() != null || !film.getDescription().isBlank()) {
+        if (film.getDescription() == null || film.getDescription().isBlank()) {
             log.debug("Меняем описание фильма {} с {} на {}", film.getId(), oldFilm.getDescription(), film.getDescription());
             film.setDescription(oldFilm.getDescription());
             log.info("Описание фильма {} изменено на {}!", oldFilm.getId(), oldFilm.getDescription());
         }
-        if (film.getReleaseDate() != null) {
+        if (film.getReleaseDate() == null) {
             log.debug("Меняем дату релиза фильма {} с {} на {}", film.getId(), oldFilm.getReleaseDate(), film.getReleaseDate());
             film.setReleaseDate(oldFilm.getReleaseDate());
             log.info("Дата релиза фильма {} изменена на {}!", oldFilm.getId(), oldFilm.getReleaseDate());
         }
-        if (film.getDuration() != null) {
+        if (film.getDuration() == null) {
             log.debug("Меняем длительность фильма {} с {} на {}", film.getId(), oldFilm.getDuration(), film.getDuration());
-            oldFilm.setDuration(film.getDuration());
             film.setDuration(oldFilm.getDuration());
             log.info("Длительность фильма {} изменена на {}!", oldFilm.getId(), oldFilm.getDuration());
         }
-
-
 
         return filmStorage.updateFilm(film);
     }
