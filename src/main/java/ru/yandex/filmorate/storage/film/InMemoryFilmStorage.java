@@ -2,14 +2,9 @@ package ru.yandex.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.yandex.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
@@ -18,9 +13,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
-    InMemoryUserStorage inMemoryUserStorage;
     private long id = 1;
-
 
     @Override
     public Collection<Film> getAllFilms() {
