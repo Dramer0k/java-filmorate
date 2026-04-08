@@ -19,9 +19,9 @@ public interface UserStorage {
 
     void removeFriend(String id, String friendId);
 
-    void setLike(String id, String userId);
+    void setLike(Long id, Long userId);
 
-    void removeLike(String id, String userId);
+    void removeLike(Long id, Long userId);
 
     List<User> getAllFriends(String id);
 

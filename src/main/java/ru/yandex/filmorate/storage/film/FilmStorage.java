@@ -16,9 +16,9 @@ public interface FilmStorage {
 
     Film updateFilm(Film film) throws ValidationException;
 
-    void setLike(String id, String userId);
+    void setLike(Long id, Long userId);
 
-    void removeLike(String id, String userId);
+    void removeLike(Long id, Long userId);
 
     List<Film> getFavoritesFilms(String count);
 

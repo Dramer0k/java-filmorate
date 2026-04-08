@@ -78,27 +78,27 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void setLike(String id, String userId) {
-        User user = users.get(Long.valueOf(userId));
+    public void setLike(Long id, Long userId) {
+        User user = users.get(userId);
         if (user == null) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        if (user.getFavoriteFilms().contains(Long.valueOf(id))) {
+        if (user.getFavoriteFilms().contains(id)) {
             throw new ConditionsNotMetException("Лайк на этот фильм уже поставлен!");
         }
-        user.getFavoriteFilms().add(Long.valueOf(id));
+        user.getFavoriteFilms().add(id);
     }
 
     @Override
-    public void removeLike(String id, String userId) {
-        User user = users.get(Long.valueOf(userId));
+    public void removeLike(Long id, Long userId) {
+        User user = users.get(userId);
         if (user == null) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        if (!user.getFavoriteFilms().contains(Long.valueOf(id))) {
+        if (!user.getFavoriteFilms().contains(id)) {
             throw new ConditionsNotMetException("Лайка на этом фильме нет!");
         }
-        user.getFavoriteFilms().remove(Long.valueOf(id));
+        user.getFavoriteFilms().remove(id);
     }
 
     @Override

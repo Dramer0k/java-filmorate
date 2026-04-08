@@ -49,15 +49,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void setLike(String id, String userId) {
-        Film film = films.get(Long.valueOf(id));
+    public void setLike(Long id, Long userId) {
+        Film film = films.get(id);
         film.setLikeCount(film.getLikeCount() + 1);
         log.info("Лайк поставлен!");
     }
 
     @Override
-    public void removeLike(String id, String userId) {
-        Film film = films.get(Long.valueOf(id));
+    public void removeLike(Long id, Long userId) {
+        Film film = films.get(id);
         film.setLikeCount(film.getLikeCount() - 1);
         log.info("Лайк удален!");
     }

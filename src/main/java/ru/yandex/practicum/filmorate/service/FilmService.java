@@ -121,7 +121,7 @@ import java.util.List;
         }
     }
 
-    public void setLike(String id, String userId) {
+    public void setLike(Long id, Long userId) {
         log.info("Поставить лайк");
         if (filmStorage.getFilm(Long.valueOf(id)) == null) {
             throw new NotFoundException("Фильма с id " + id + " е существует");
@@ -130,7 +130,7 @@ import java.util.List;
         userStorage.setLike(id, userId);
     }
 
-    public void removeFilm(String id, String userId) {
+    public void removeFilm(Long id, Long userId) {
         log.info("Убрать лайк");
         if (filmStorage.getFilm(Long.valueOf(id)) == null) {
             throw new NotFoundException("Фильм с id " + id + " не найден!");
