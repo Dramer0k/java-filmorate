@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -59,7 +60,7 @@ class FilmControllerTest {
         mockMvc.perform(post(BASE_PATH)
                  .content(new String(Files.readAllBytes(Paths.get(JSON_POST_PATH + "incorrectDate.json"))))
                  .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(forwardedUrl("Дата релиза не может быть раньше чем " + FilmController.MIN_RELEASE_DATE));
+                .andExpect(forwardedUrl("Дата релиза не может быть раньше чем " + FilmService.MIN_RELEASE_DATE));
     }
 
     @Test
@@ -91,7 +92,7 @@ class FilmControllerTest {
         mockMvc.perform(put(BASE_PATH)
                 .content(new String(Files.readAllBytes(Paths.get(JSON_PUT_PATH + "incorrectDate.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(forwardedUrl("Дата релиза не может быть раньше чем " + FilmController.MIN_RELEASE_DATE));
+                .andExpect(forwardedUrl("Дата релиза не может быть раньше чем " + FilmService.MIN_RELEASE_DATE));
     }
 
     @Test
@@ -122,6 +123,6 @@ class FilmControllerTest {
         mockMvc.perform(put(BASE_PATH)
                 .content(new String(Files.readAllBytes(Paths.get(JSON_PUT_PATH + "incorrectName.json"))))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value("Gorilla"));
+                .andExpect(jsonPath("$.name").value("Godzilla"));
     }
 }
