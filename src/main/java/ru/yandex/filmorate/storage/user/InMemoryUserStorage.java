@@ -56,11 +56,14 @@ public class InMemoryUserStorage implements UserStorage {
         if  (user == null || friend == null) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        if (user.getFriends().contains(friend.getId())) {
+        if (user.getFriends().containsKey(friend.getId())) {
             throw new ConditionsNotMetException("Такой друг уже есть!");
         }
-        user.getFriends().add(friend.getId());
-        friend.getFriends().add(user.getId());
+        if (friend.getFriends().containsKey(user.getId())) {
+            user.getFriends().put(friend.getId(), true);
+            friend.getFriends().put(user.getId(), true);
+        }
+        user.getFriends().put(friend.getId(), false);
         log.info("Друг с id {} добавлен", friend.getId());
     }
 
@@ -107,7 +110,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user == null) {
             throw new NotFoundException("Пользователя с id " + id + " не существует!");
         }
-        return user.getFriends().stream()
+        return user.getFriends().values().stream()
                 .map(users::get)
                 .toList();
     }
@@ -125,8 +128,8 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getMutualFriends(String id, String friendId) {
         User user = users.get(Long.valueOf(id));
         User friend = users.get(Long.valueOf(friendId));
-        return user.getFriends().stream()
-                .filter(friend.getFriends()::contains)
+        return user.getFriends().values().stream()
+                .filter(friend.getFriends().values()::contains)
                 .map(users::get)
                 .toList();
     }
