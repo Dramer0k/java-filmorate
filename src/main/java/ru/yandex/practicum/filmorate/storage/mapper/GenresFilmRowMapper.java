@@ -14,8 +14,8 @@ public class GenresFilmRowMapper implements RowMapper<GenresFilm> {
     @Override
     public GenresFilm mapRow(@Nonnull ResultSet resultSet, int rowNum) throws SQLException {
         GenresFilm genresFilm = new GenresFilm();
-        genresFilm.setGenre_id(resultSet.getLong("genre_id"));
-        genresFilm.setFilm_id(resultSet.getLong("film_id"));
+        genresFilm.setGenreId(resultSet.getLong("genre_id"));
+        genresFilm.setFilmId(resultSet.getLong("film_id"));
 
         return genresFilm;
     }

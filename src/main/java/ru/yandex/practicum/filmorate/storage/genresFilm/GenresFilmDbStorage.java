@@ -39,7 +39,7 @@ public class GenresFilmDbStorage extends BaseRepository<GenresFilm> implements G
         List<GenresFilm> list = findMany(FIND_ALL_GENRE_QUERY, filmId);
         List<Long> result = new ArrayList<>();
         for (GenresFilm genresFilm : list) {
-            result.add(genresFilm.getGenre_id());
+            result.add(genresFilm.getGenreId());
         }
         return result;
     }
