@@ -23,7 +23,7 @@ public class GenreService {
     }
 
     public Genre getGenreById(Long id) {
-        log.info("Get /genres/{}", id );
+        log.info("Get /genres/{}", id);
         Genre result = genreStorage.getGenreById(id);
         log.info("Жанр {}: {}", id, result);
         return result;
