@@ -14,8 +14,8 @@ import java.util.*;
 @Slf4j
 @Repository
 public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorage {
-    private final static String FIND_ALL_QUERY = "SELECT * FROM genre";
-    private final static String FIND_GENRE_BY_ID_QUERY = "SELECT * FROM genre WHERE id = ?";
+    private static final  String FIND_ALL_QUERY = "SELECT * FROM genre";
+    private static final  String FIND_GENRE_BY_ID_QUERY = "SELECT * FROM genre WHERE id = ?";
 
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
         super(jdbc, mapper);

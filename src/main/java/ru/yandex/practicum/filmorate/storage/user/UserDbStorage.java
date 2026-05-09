@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Primary
 @Repository
-public class UserDbStorage extends BaseRepository<User> implements UserStorage{
+public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
     private static final String INSERT_QUERY = "INSERT INTO users(login, name, email, birthday)" +
@@ -68,7 +68,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage{
     @Override
     public User getUserById(Long id) {
         User user;
-        if(findOne(FIND_USER_BY_ID_QUERY, id).isPresent()) {
+        if (findOne(FIND_USER_BY_ID_QUERY, id).isPresent()) {
             user = findOne(FIND_USER_BY_ID_QUERY, id).get();
             return user;
         } else {
@@ -108,7 +108,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage{
             throw new ConditionsNotMetException("Дружба уже есть!");
         }
 
-        if(friend.getFriends().containsKey(id)) {
+        if (friend.getFriends().containsKey(id)) {
             update(
                     UPDATE_FRIENDSHIP_QUERY,
                     true,

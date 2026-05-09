@@ -14,8 +14,8 @@ import java.util.List;
 @Slf4j
 @Repository
 public class MpaDbStorage extends BaseRepository<Mpa> implements MpaStorage {
-    private final static String FIND_ALL_MPA_QUERY = "SELECT * FROM rating";
-    private final static String FIND_MPA_DY_ID_QUERY = "SELECT * FROM rating WHERE id = ?";
+    private static final String FIND_ALL_MPA_QUERY = "SELECT * FROM rating";
+    private static final String FIND_MPA_DY_ID_QUERY = "SELECT * FROM rating WHERE id = ?";
 
     public MpaDbStorage(JdbcTemplate jdbc, RowMapper<Mpa> mapper) {
         super(jdbc, mapper);

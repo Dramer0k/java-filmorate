@@ -16,9 +16,9 @@ import java.util.List;
 @Slf4j
 @Repository
 public class GenresFilmDbStorage extends BaseRepository<GenresFilm> implements GenresFilmStorage {
-    private final static String INSERT_QUERY = "INSERT INTO genres_film(genre_id, film_id)\n" +
+    private static final String INSERT_QUERY = "INSERT INTO genres_film(genre_id, film_id)\n" +
             "VALUES (?, ?)";
-    private final static String FIND_ALL_GENRE_QUERY = "SELECT * FROM genres_film WHERE film_id = ?\n" +
+    private static final String FIND_ALL_GENRE_QUERY = "SELECT * FROM genres_film WHERE film_id = ?\n" +
             "ORDER BY genre_id";
 
     public GenresFilmDbStorage(JdbcTemplate jdbc, RowMapper<GenresFilm> mapper) {
