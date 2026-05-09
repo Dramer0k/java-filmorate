@@ -18,8 +18,8 @@ import java.util.List;
 @Slf4j
 @Primary
 @Repository
-public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage{
-    private final static String FIND_ALL_QUERY = "SELECT * FROM films";
+public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
+    private static final String FIND_ALL_QUERY = "SELECT * FROM films";
     private static final String INSERT_QUERY = "INSERT INTO films(name, description, release_date, duration, rating_id)\n" +
             "VALUES (?, ?, ?, ?, ?)";
     private static final String FIND_FILM_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
@@ -61,7 +61,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage{
     @Override
     public Film removeFilm(Long filmId) {
         Film film = null;
-        if(findOne(FIND_FILM_BY_ID_QUERY, filmId).isPresent()) {
+        if (findOne(FIND_FILM_BY_ID_QUERY, filmId).isPresent()) {
             film = findOne(FIND_FILM_BY_ID_QUERY, filmId).get();
         } else {
             throw new NotFoundException("Фильм не найден!");
