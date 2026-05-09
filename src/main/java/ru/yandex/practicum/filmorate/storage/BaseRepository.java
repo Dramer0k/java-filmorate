@@ -23,12 +23,13 @@ public class BaseRepository<T> {
 
     protected Optional<T> remove(String query, Object... params) {
         try {
-            T result =jdbc.queryForObject(query, mapper, params);
+            T result = jdbc.queryForObject(query, mapper, params);
             return Optional.ofNullable(result);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
         }
     }
+
     protected boolean delete(String query, Object... params) {
         int rowsDeleted = jdbc.update(query, params);
         return rowsDeleted > 0;
@@ -37,7 +38,7 @@ public class BaseRepository<T> {
 
     protected Optional<T> findOne(String query, Object... params) {
         try {
-            T result =jdbc.queryForObject(query, mapper, params);
+            T result = jdbc.queryForObject(query, mapper, params);
             return Optional.ofNullable(result);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
@@ -52,6 +53,7 @@ public class BaseRepository<T> {
             for (int idx = 0; idx < params.length; idx++) {
                 ps.setObject(idx + 1, params[idx]);
             }
+
             return ps;}, keyHolder);
 
         Long id = keyHolder.getKeyAs(Long.class);
@@ -72,6 +74,7 @@ public class BaseRepository<T> {
             for (int idx = 0; idx < params.length; idx++) {
                 ps.setObject(idx + 1, params[idx]);
             }
+            
             return ps;}, keyHolder);
     }
 
