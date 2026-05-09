@@ -20,5 +20,5 @@ public class Film {
     private int likeCount = 0;
     private List<Genre> genres = new ArrayList<>();
     private Mpa mpa;
-    private Long MpaId;
+    private Long mpaId;
 }
