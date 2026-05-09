@@ -8,10 +8,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
-import ru.yandex.practicum.filmorate.storage.genresFilm.GenresFilmStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository

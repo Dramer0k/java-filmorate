@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.mapper;
 import jakarta.annotation.Nonnull;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Controller;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.GenresFilm;
 
 import java.sql.ResultSet;
