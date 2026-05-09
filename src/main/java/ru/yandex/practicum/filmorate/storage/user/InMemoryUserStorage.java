@@ -1,18 +1,20 @@
-package ru.yandex.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Data
-@Component
+@Repository
 @RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
@@ -50,30 +52,31 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(String id, String friendId) {
-        User user = users.get(Long.valueOf(id));
-        User friend = users.get(Long.valueOf(friendId));
+    public void addFriend(Long id, Long friendId) {
+        User user = users.get(id);
+        User friend = users.get(friendId);
         if  (user == null || friend == null) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        if (user.getFriends().contains(friend.getId())) {
-            throw new ConditionsNotMetException("Такой друг уже есть!");
+        if (user.getFriends().containsKey(friend.getId())) {
+            if (user.getFriends().get(friend.getId()) == true) {
+                throw new ConditionsNotMetException("Такой друг уже есть!");
+            }
+            user.getFriends().put(friend.getId(), true);
         }
-        user.getFriends().add(friend.getId());
-        friend.getFriends().add(user.getId());
+        user.getFriends().put(friend.getId(), true);
+        friend.getFriends().put(user.getId(), false);
         log.info("Друг с id {} добавлен", friend.getId());
     }
 
     @Override
-    public void removeFriend(String id, String friendId) {
-        User user = users.get(Long.valueOf(id));
-        User friend = users.get(Long.valueOf(friendId));
+    public void removeFriend(Long id, Long friendId) {
+        User user = users.get(id);
+        User friend = users.get(friendId);
         if  (user == null || friend == null) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        user.getFriends().remove(friend.getId());
-        friend.getFriends().remove(user.getId());
-
+        user.getFriends().put(friend.getId(), false);
         log.info("Друг с id {} удален", friend.getId());
     }
 
@@ -102,18 +105,21 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getAllFriends(String id) {
-        User user = users.get(Long.valueOf(id));
+    public List<User> getAllFriends(Long id) {
+        User user = users.get(id);
         if (user == null) {
             throw new NotFoundException("Пользователя с id " + id + " не существует!");
         }
-        return user.getFriends().stream()
+        List<User> friendList = user.getFriends().keySet()
+                .stream()
                 .map(users::get)
                 .toList();
+        log.info("Список друзей: {}", friendList);
+        return friendList;
     }
 
     @Override
-    public User getById(Long id) {
+    public User getUserById(Long id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException("Пользователя с id " + id + " нет");
         }
@@ -122,11 +128,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getMutualFriends(String id, String friendId) {
-        User user = users.get(Long.valueOf(id));
-        User friend = users.get(Long.valueOf(friendId));
-        return user.getFriends().stream()
-                .filter(friend.getFriends()::contains)
+    public List<User> getMutualFriends(Long id, Long friendId) {
+        User user = users.get(id);
+        User friend = users.get(friendId);
+        return user.getFriends().keySet().stream()
+                .filter(friend.getFriends().keySet()::contains)
                 .map(users::get)
                 .toList();
     }
