@@ -1,8 +1,9 @@
-package ru.yandex.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -27,7 +28,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         id++;
         films.put(film.getId(), film);
 
-        log.info("Новый фильм добавлен {}", film);
         return film;
     }
 
@@ -36,15 +36,30 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film oldFilm = films.get(filmId);
         films.remove(filmId);
 
-        log.info("Фильм {} с id {} удален", oldFilm.getName(), filmId);
-
         return oldFilm;
     }
 
     @Override
     public Film updateFilm(Film film) throws ValidationException {
+        Film oldFilm = getFilm(film.getId());
+
+        if (oldFilm == null) {
+            throw new NotFoundException("Фильма с id " + film.getId() + " не существует!");
+        }
+        if (film.getName() == null || film.getName().isBlank()) {
+            film.setName(oldFilm.getName());
+        }
+        if (film.getDescription() == null || film.getDescription().isBlank()) {
+            film.setDescription(oldFilm.getDescription());
+        }
+        if (film.getReleaseDate() == null) {
+            film.setReleaseDate(oldFilm.getReleaseDate());
+        }
+        if (film.getDuration() == null) {
+            film.setDuration(oldFilm.getDuration());
+        }
+
         films.put(film.getId(), film);
-        log.info("В информацию о фильме {} внесены изменения!", film.getId());
         return film;
     }
 
@@ -52,14 +67,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void setLike(Long id, Long userId) {
         Film film = films.get(id);
         film.setLikeCount(film.getLikeCount() + 1);
-        log.info("Лайк поставлен!");
     }
 
     @Override
     public void removeLike(Long id, Long userId) {
         Film film = films.get(id);
         film.setLikeCount(film.getLikeCount() - 1);
-        log.info("Лайк удален!");
     }
 
     @Override
@@ -68,10 +81,6 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .sorted(Comparator.comparing(Film::getLikeCount).reversed())
                 .limit(Integer.parseInt(count))
                 .toList();
-    }
-
-    public boolean checkFilm(Long filmId) {
-        return films.containsKey(filmId);
     }
 
     public Film getFilm(Long filmId) {

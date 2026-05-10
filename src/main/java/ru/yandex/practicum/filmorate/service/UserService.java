@@ -3,11 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -24,7 +25,14 @@ public class UserService {
         return userStorage.getUsersMap();
     }
 
-    public User createUser(User user) throws ValidationException {
+    public User getUserById(Long id) {
+        log.info("GET /{}", id);
+        User result = userStorage.getUserById(id);
+        log.info("Получен пользователь: {}", result);
+        return result;
+    }
+
+    public User createUser(User user) throws ValidationException, InternalServerException {
         log.info("POST /users {}", user);
 
         checkValidateLogin(user);
@@ -32,16 +40,22 @@ public class UserService {
         checkValidateEmail(user);
         checkValidateBirthday(user);
 
-        return userStorage.createUser(user);
+        log.info("Валидация прошла успешно. Создаем пользователя...");
+
+        User result = userStorage.createUser(user);
+        log.info("Пользователь создан: {}", result);
+
+        return result;
     }
 
-    public User updateUserInfo(User user) throws ValidationException {
+    public User updateUserInfo(User user) throws ValidationException, InternalServerException {
         log.info("PUT /users {}", user);
+
         if (user.getId() == null || user.getId().toString().isBlank()) {
             log.debug("не указан id {}", user.getId());
             throw new ConditionsNotMetException("Id должен быть указан");
         }
-        User oldUser = userStorage.getById(user.getId());
+        User oldUser = userStorage.getUserById(user.getId());
         if (oldUser == null) {
             throw new NotFoundException("Пользователь с id " + user.getId() + " не найден!");
         }
@@ -50,9 +64,7 @@ public class UserService {
         checkValidateBirthday(user);
         checkValidateEmail(user);
 
-        log.info(String.valueOf(user.getId()));
-
-        if (user.getName() == null && !user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             log.debug("Пользователь с id: {}. Меняем имя {} на {}", user.getId(), oldUser.getName(), user.getName());
             user.setName(oldUser.getName());
             log.info("У пользователя с id {} изменено имя на {}", user.getId(), user.getName());
@@ -61,12 +73,12 @@ public class UserService {
             user.setLogin(oldUser.getLogin());
         }
         if (user.getEmail() == null) {
-            log.debug("Пользователь с id: {}. Меняем почту {} на {}", user.getId(), oldUser.getEmail(), user.getEmail());
+            log.debug("Пользователь с id: {}. Меняем почту на {}", user.getId(), oldUser.getEmail());
             user.setEmail(oldUser.getEmail());
             log.info("У пользователя с id {} изменена почта на {}", user.getId(), user.getEmail());
         }
         if (user.getBirthday() == null) {
-            log.debug("Пользователь с id: {}. Меняем дату рождения {} на {}", user.getId(), oldUser.getBirthday(), user.getBirthday());
+            log.debug("Пользователь с id: {}. Меняем дату рождения на {}", user.getId(), oldUser.getBirthday());
             user.setBirthday(oldUser.getBirthday());
             log.info("У пользователя с id {} изменена дата рождения на {}", user.getId(), user.getBirthday());
         }
@@ -86,23 +98,26 @@ public class UserService {
         return userStorage.removeUser(userId);
     }
 
-    public void addFriend(String id, String friendId) {
-        log.info("Добавляем в друзья");
+    public void addFriend(Long id, Long friendId) throws InternalServerException {
+        log.info("PUT /users/{}/friends/{}", id, friendId);
+        log.info("User: {} добавляет в друзья User: {}", id, friendId);
         userStorage.addFriend(id, friendId);
     }
 
-    public void removeFriend(String id, String friendId) {
-        log.info("Удалить друга");
+    public void removeFriend(Long id, Long friendId) {
+        log.info("DELETE /users/{}/friends/{}", id, friendId);
         userStorage.removeFriend(id, friendId);
     }
 
-    public List<User> getAllFriends(String id) {
-        log.info("Получить список друзей");
+    public List<User> getAllFriends(Long id) {
+        log.info("GET /users/{}/friends", id);
+        log.info("Получить список друзей пользователя: {}", id);
         return userStorage.getAllFriends(id);
     }
 
-    public List<User> getMutualFriends(String id, String friendId) {
-        log.info("Получить список общих друзей");
+    public List<User> getMutualFriends(Long id, Long friendId) {
+        log.info("GET /users/{}/friends/common/{}", id, friendId);
+        log.info("Получить список общих друзей пользователя: {}", id);
         return userStorage.getMutualFriends(id, friendId);
     }
 
@@ -139,8 +154,5 @@ public class UserService {
         }
 
     }
-
-
-
 
 }

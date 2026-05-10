@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.controller.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.request.FilmRequest;
@@ -27,15 +28,20 @@ public class FilmController  {
         return filmService.getAllFilms();
     }
 
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) throws InternalServerException {
+        return filmService.getFilmById(id);
+    }
+
     @PostMapping
-    public FilmResponse create(@RequestBody FilmRequest request) throws ValidationException {
+    public FilmResponse create(@RequestBody FilmRequest request) throws ValidationException, InternalServerException {
         Film film = mapper.toFilm(request);
         Film result = filmService.addFilm(film);
         return mapper.toResponse(result);
     }
 
     @PutMapping
-    public FilmResponse update(@RequestBody FilmRequest request) throws ValidationException {
+    public FilmResponse update(@RequestBody FilmRequest request) throws ValidationException, InternalServerException {
         Film film = mapper.toFilm(request);
         Film result = filmService.updateFilm(film);
         return mapper.toResponse(result);
@@ -47,7 +53,7 @@ public class FilmController  {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void setLike(@PathVariable Long id, @PathVariable Long userId) {
+    public void setLike(@PathVariable Long id, @PathVariable Long userId) throws InternalServerException {
         filmService.setLike(id, userId);
     }
 
