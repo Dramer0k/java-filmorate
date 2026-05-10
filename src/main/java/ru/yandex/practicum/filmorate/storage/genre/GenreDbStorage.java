@@ -9,13 +9,18 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
 public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorage {
     private static final  String FIND_ALL_QUERY = "SELECT * FROM genre";
     private static final  String FIND_GENRE_BY_ID_QUERY = "SELECT * FROM genre WHERE id = ?";
+    private static final String FIND_GENRES_BY_IDS_QUERY ="SELECT * FROM genre WHERE id IN (?)";
 
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
         super(jdbc, mapper);
@@ -24,6 +29,25 @@ public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorag
     @Override
     public List<Genre> findAllGenres() {
         return findMany(FIND_ALL_QUERY);
+    }
+
+    @Override
+    public Film addGenre(Film film) {
+        if (film.getGenres() == null || film.getGenres().isEmpty()) {
+            return film;
+        }
+
+        List<Long> genreIds = film.getGenres().stream()
+                .map(Genre::getId)
+                .collect(Collectors.toList());
+
+        Set<Genre> genres = new HashSet<>(findGenresByIds("genre", genreIds));
+        List<Genre> sortedGenres = genres.stream()
+                .sorted(Comparator.comparingLong(Genre::getId))
+                .toList();
+
+        film.setGenres(sortedGenres);
+        return film;
     }
 
     @Override
@@ -39,25 +63,6 @@ public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorag
 
     @Override
     public List<Genre> getGenres(List<Long> genres) {
-        List<Genre> list = new ArrayList<>();
-        for (Long id : genres) {
-            list.add(getGenreById(id));
-        }
-        return list;
-    }
-
-    @Override
-    public Film addGenre(Film film) {
-        Set<Genre> genres = new HashSet<>();
-        for (Genre genre : film.getGenres()) {
-            Genre result = getGenreById(genre.getId());
-            genres.add(result);
-        }
-        List<Genre> sortedGenres = genres.stream()
-                .sorted(Comparator.comparingLong(Genre::getId)) // сортировка по id в порядке возрастания
-                .toList();
-
-        film.setGenres(sortedGenres);
-        return film;
+        return findGenresByIds("genre", genres);
     }
 }

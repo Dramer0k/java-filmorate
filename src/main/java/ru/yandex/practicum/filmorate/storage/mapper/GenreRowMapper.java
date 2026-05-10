@@ -2,13 +2,13 @@ package ru.yandex.practicum.filmorate.storage.mapper;
 
 import jakarta.annotation.Nonnull;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Controller
+@Component
 public class GenreRowMapper implements RowMapper<Genre> {
 
     @Override

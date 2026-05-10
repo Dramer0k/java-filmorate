@@ -26,11 +26,13 @@ public class GenresFilmDbStorage extends BaseRepository<GenresFilm> implements G
     }
 
     @Override
-    public void addGenresFilm(Film film) throws InternalServerException {
+    public void addGenresFilm(Film film) {
         if (film.getGenres() != null) {
+            List<Object[]> batchArgs = new ArrayList<>();
             for (Genre genre : film.getGenres()) {
-                insertWithoutId(INSERT_QUERY, genre.getId(), film.getId());
+                batchArgs.add(new Object[]{genre.getId(), film.getId()});
             }
+            batchUpdate(INSERT_QUERY, batchArgs);
         }
     }
 

@@ -6,11 +6,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class BaseRepository<T> {
@@ -90,6 +90,21 @@ public class BaseRepository<T> {
     protected boolean checkAvailability(String query, Object... params) {
         Long result = jdbc.queryForObject(query, Long.class, params);
         return result > 0;
+    }
+
+    protected void batchUpdate(String query, List<Object[]> batchArgs) {
+        jdbc.batchUpdate(query, batchArgs);
+    }
+
+    protected List<T> findGenresByIds(String tableName, List<Long> genreIds) {
+        if (genreIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        String placeholders = String.join(",", Collections.nCopies(genreIds.size(), "?"));
+        String query = String.format("SELECT * FROM %s WHERE id IN (%s)", tableName, placeholders);
+
+        return jdbc.query(query, mapper, genreIds.toArray());
     }
 
 }
