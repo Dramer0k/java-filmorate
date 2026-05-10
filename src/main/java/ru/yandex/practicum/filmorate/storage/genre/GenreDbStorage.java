@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorage {
     private static final  String FIND_ALL_QUERY = "SELECT * FROM genre";
     private static final  String FIND_GENRE_BY_ID_QUERY = "SELECT * FROM genre WHERE id = ?";
-    private static final String FIND_GENRES_BY_IDS_QUERY ="SELECT * FROM genre WHERE id IN (?)";
 
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
         super(jdbc, mapper);
